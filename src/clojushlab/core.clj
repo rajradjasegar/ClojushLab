@@ -15,7 +15,7 @@
      var = #'[a-zA-Z0-9]+'
      
      (* operations *)
-     operation = matrix? <space>? op <space>? matrix?
+     operation = matrix <space>? op <space>? matrix
 
      (* operateurs *)
      op = '*' | '+' | '-'
@@ -33,4 +33,4 @@
      number = #'[0-9]+'"
   ))
 
-(vec-parser "m([5454 151 484 4]) * m([5454 151 484 4]); v = m([1 2 5 8 7]) + m([1]);")
+(vec-parser "m([5454 151 484 4]) * m([5454 151 484 4]); v = m([1 2 5 8 7]) + m([1]);m([4]) * m([2]);")

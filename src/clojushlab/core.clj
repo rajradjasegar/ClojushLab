@@ -3,7 +3,8 @@
 
 (def vec-parser
   (insta/parser
-    "instrs = ((assign? | expr?) <';'> <space>?)*
+    "
+     instrs = ((assign? | expr?) <';'> <space>?)*
      
      (* expression *)
      expr = (<space>? (assign | operation) <space>?)*
@@ -11,12 +12,9 @@
      (* Affectation *)
      assign = var <space>? <'='> <space>? (operation | number)  
      
-     (* variables *)
-     var = #'[a-zA-Z0-9]+'
-     
      (* operations *)
      operation = matrix <space>? op <space>? matrix
-
+ 
      (* operateurs *)
      op = '*' | '+' | '-'
 
@@ -24,13 +22,16 @@
      matrix = <'m('> <space>? matrow* <space>? <')'>
 
      (* Represente une ligne de la matrice *)
-     matrow = <'['> <space>? (number <space>)*  <']'>
+     matrow = <space>? <'['> <space>? (number <space>)*  <']'> <space>?
 
      (* Les espaces *)
      <space> = #'[\\s]*'
 
      (* Les constantes de 0 à 9 *)
-     number = #'[0-9]+'"
+     number = #'[0-9]+'
+
+     (* variables *)
+     var = #'[a-zA-Z0-9]+'"
   ))
 
-(vec-parser "m([5454 151 484 4]) * m([5454 151 484 4]); v = m([1 2 5 8 7]) + m([1]);m([4]) * m([2]);")
+(vec-parser "v = m([1 2 5] [1 2 5]) * m([1 2 5] [1 2 5] ) ;  m([4]) * m([2]);")

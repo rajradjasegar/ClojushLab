@@ -34,18 +34,21 @@
      var = #'[a-zA-Z0-9]+'"
   ))
 
-(defn add-mat [op m1 m2] 
+;(defn add-mat [op m1 m2] 
   ;(def number_ligne (count m1))
-  (def index (count '(concat (nth m1 0) (nth m1 1))))
-  (split-at index (map op (concat (nth m1 0) (nth m1 1)) (concat (nth m2 0) (nth m2 1)))))
+ ;(def index (count '(concat (nth m1 0) (nth m1 1))))
+ ;(split-at index (map op (concat (nth m1 0) (nth m1 1)) (concat (nth m2 0) (nth m2 1)))))
+
+(defn add-mat [op m1 m2] 
+(mapv #(mapv op %1 %2) m1 m2))
 
 (defn sub-mat [op m1 m2] 
   ;(def number_ligne (count m1))
   (def index (count '(concat (nth m1 0) (nth m1 1))))
   (split-at index (map op (concat (nth m1 0) (nth m1 1)) (concat (nth m2 0) (nth m2 1)))))
 
-(defn mul-mat
-  [m1 m2])
+;(defn mul-mat
+ ; [m1 m2])
 
 (defn execute 
   [m1 op m2]
@@ -54,6 +57,20 @@
         [:op "+"] (add-mat + m1 m2)
         [:op "-"] (sub-mat - m1 m2 )
         "Unknown operator"))
+
+ (defn transpose
+  [s]
+  (apply map vector s))
+ 
+(defn nested-for
+  [f x y]
+  (map (fn [a]
+         (map (fn [b] 
+                (f a b)) y))
+       x))
+(defn mul-mat
+  [m1 m2]
+  (nested-for (fn [x y] (reduce + (map * x y))) m1 (transpose m2)))
 
 (def matrice-interpret
   {
@@ -64,5 +81,5 @@
    :operation execute
    })
 
-(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)]  - m[ (1 8 6) (4 8 1) ]; m[ (1 2 5)  (1 2 5)]  - m[ (1 1 6) (4 4 1)];"))
-
+;(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)]  - m[ (1 8 6) (4 8 1) ]; m[ (1 2 5)  (1 2 5)]  - m[ (1 1 6) (4 4 1)];"))
+(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)(1 2 5)]   + m[ (1 8 6) (4 8 1) (1 2 5)];"))

@@ -35,10 +35,7 @@
   ))
 
 (defn add-mat 
-  [m1 m2])
-
-(defn sub-mat
-  [m1 m2])
+  [op m1 m2])
 
 (defn mul-mat
   [m1 m2])
@@ -46,14 +43,15 @@
 (defn execute 
   [m1 op m2]
   (case op
-        [:op "*"] "mul"
-        [:op "+"] "add"
-        [:op "-"] "minus"
-        "default"))
+        [:op "*"] (mul-mat m1 m2)
+        [:op "+"] (add-mat + m1 m2)
+        [:op "-"] (add-mat - m1 m2)
+        "Unknown operator"))
 
 (def matrice-interpret
   {
    :number #(Long/parseLong %)
    :operation execute
    })
-(insta/transform matrice-interpret (matrice-parser "m([1 2 5] [1 2 5]) * m( [1 2 5] [1 2 5] );"))
+
+(insta/transform matrice-interpret (matrice-parser "m( [1 2 5] [1 2 5])  - m( [1 2 5] [1 2 5] );"))

@@ -19,10 +19,10 @@
      op = '*' | '+' | '-'
 
      (* matrices *)
-     matrix = <'m('> <space>? matrow* <space>? <')'>
+     matrix = <'m['> <space>? matrow* <space>? <']'>
 
      (* Represente une ligne de la matrice *)
-     matrow = <space>? <'['> <space>? (number <space>)*  <']'> <space>?
+     matrow = <space>? <'('> <space>? (number <space>)*  <')'> <space>?
 
      (* Les espaces *)
      <space> = #'[\\s]*'
@@ -52,10 +52,10 @@
 (def matrice-interpret
   {
    :number #(Long/parseLong %)
-   :matrow (comp list)
+   :matrow (comp vec list)
    :matrix (comp vec list)
    :expr (comp)
    :operation execute
    })
 
-(insta/transform matrice-interpret (matrice-parser "m( [1 2 5]  [1 2 5])  - m( [1 8 6] [4 8 1] ); m( [1 2 5]  [1 2 5])  - m( [1 1 6] [4 4 1] );"))
+(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)]  - m[ (1 8 6) (4 8 1) ]; m[ (1 2 5)  (1 2 5)]  - m[ (1 1 6) (4 4 1)];"))

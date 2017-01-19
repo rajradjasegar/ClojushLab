@@ -1,7 +1,7 @@
 (ns clojushlab.core
   (:require [instaparse.core :as insta]))
 
-(def vec-parser
+(def matrice-parser
   (insta/parser
     "
      instrs = ((assign? | expr?) <';'> <space>?)*
@@ -34,4 +34,26 @@
      var = #'[a-zA-Z0-9]+'"
   ))
 
-(vec-parser "v = m([1 2 5] [1 2 5]) * m([1 2 5] [1 2 5] ) ;  m([4]) * m([2]);")
+(defn add-mat 
+  [m1 m2])
+
+(defn sub-mat
+  [m1 m2])
+
+(defn mul-mat
+  [m1 m2])
+
+(defn execute 
+  [m1 op m2]
+  (case op
+        [:op "*"] "mul"
+        [:op "+"] "add"
+        [:op "-"] "minus"
+        "default"))
+
+(def matrice-interpret
+  {
+   :number #(Long/parseLong %)
+   :operation execute
+   })
+(insta/transform matrice-interpret (matrice-parser "m([1 2 5] [1 2 5]) * m( [1 2 5] [1 2 5] );"))

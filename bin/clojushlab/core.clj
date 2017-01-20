@@ -71,4 +71,5 @@
    })
 
 ;(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)]  - m[ (1 8 6) (4 8 1) ]; m[ (1 2 5)  (1 2 5)]  - m[ (1 1 6) (4 4 1)];"))
-(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)(1 2 5)]   - m[ (1 8 6) (4 8 1) (1 2 5)];"))
+;(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)(1 2 5)]   - m[ (1 8 6) (4 8 1) (1 2 5)];"))
+(matrice-parser "m[ (1 2 5)  (1 2 5)(1 2 5)]   - m[ (1 8 6) (4 8 1) (1 2 5)];")

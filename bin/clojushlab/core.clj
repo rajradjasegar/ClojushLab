@@ -2,41 +2,46 @@
   (:require [instaparse.core :as insta]))
 
 (def matrice-parser
+  "a matrix computation parser"
   (insta/parser
-    "
-     <instrs> = ((assign? | expr?) <';'> <space>?)*
+    "expr = space? (assig | operation | number | varget) space? <';'> space?
+     assig = varname space? <'='> space? elt 
      
-     (* expression *)
-     expr = (<space>? (assign | operation) <space>?)*
-     
-     (* Affectation *)
-     assign = var <space>? <'='> <space>? (operation | number)  
-     
+     (* operation avec parenthèse ou non *)
+     <woperation> = <'('> elt space op space elt <')'>
+     <noperation> = elt space op space elt
+
      (* operations *)
-     operation = matrix <space>? op <space>? matrix
- 
+     operation = noperation | woperation
+     
+     (* Termes de l'operation *)  
+     <elt> = number | negnum | operation | varget | matrix
+
      (* operateurs *)
      op = '*' | '+' | '-'
 
      (* matrices *)
-     matrix = <'m['> <space>? matrow* <space>? <']'>
+     matrix = <'m['> (space? matrow space?)* <']'>
 
      (* Represente une ligne de la matrice *)
-     matrow = <space>? <'('> <space>? (number <space>)*  <')'> <space>?
+     matrow = <'{'> (space? elt space?)*  <'}'>
 
      (* Les espaces *)
-     <space> = #'[\\s]*'
+     <space> = <#'[ ]+'>
+     
+     negnum = <'-'> number
+     (* Les nombres composé de chiffres de 0 à 9 *)
+     number = <'+'>? #'[0-9]+'
 
-     (* Les constantes de 0 à 9 *)
-     number = #'[0-9]+'
+     varget = varname 
 
      (* variables *)
-     var = #'[a-zA-Z0-9]+'"
+     varname = #'[a-zA-Z]\\w*'"
   ))
 
 
-(defn add-mat [op m1 m2] 
-(mapv #(mapv op %1 %2) m1 m2))
+(defn add [op el1 el2] 
+(mapv #(mapv op %1 %2) el1 el2))
 
  (defn transpose
   [s]
@@ -49,27 +54,26 @@
                 (f a b)) y))
        x))
 
-(defn mul-mat
-  [m1 m2]
-  (nested-for (fn [x y] (reduce + (map * x y))) m1 (transpose m2)))
+(defn mul
+  [el1 el2]
+  (nested-for (fn [x y] (reduce + (map * x y))) el1 (transpose el2)))
 
 (defn execute 
-  [m1 op m2]
+  [el1 op el2]
   (case op
-        [:op "*"] (mul-mat m1 m2)
-        [:op "+"] (add-mat + m1 m2)
-        [:op "-"] (add-mat - m1 m2 )
+        [:op "*"] (mul el1 el2)
+        [:op "+"] (add + el1 el2)
+        [:op "-"] (add - el1 el2)
         "Unknown operator"))
 
 (def matrice-interpret
   {
    :number #(Long/parseLong %)
+   :negnum #(* -1 %1)
    :matrow (comp vec list)
    :matrix (comp vec list)
-   :expr (comp)
    :operation execute
    })
 
-;(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)]  - m[ (1 8 6) (4 8 1) ]; m[ (1 2 5)  (1 2 5)]  - m[ (1 1 6) (4 4 1)];"))
-;(insta/transform matrice-interpret (matrice-parser "m[ (1 2 5)  (1 2 5)(1 2 5)]   - m[ (1 8 6) (4 8 1) (1 2 5)];"))
-(matrice-parser "m[ (1 2 5)  (1 2 5)(1 2 5)]   - m[ (1 8 6) (4 8 1) (1 2 5)];")
+(insta/transform matrice-interpret (matrice-parser "(m[ {1 2 3} {4 +5 6}] + m[ {7 8 9} {10 -11 12}]) * m[ {1 8 9} {1 2 6} {2 4 5}];"))
+;(matrice-parser "m[ {7 2 3} {4 5 6}] + m[ {7 8 9} {10 11 12} ]  - m[ {13  14 15} {16 17 18}]  ];")

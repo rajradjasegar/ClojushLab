@@ -38,8 +38,6 @@
      (* variables *)
      varname = #'[a-zA-Z]\\w*'"
   ))
-;(* operations *) est ce qu'on peut l'ajouter ?
-;operation = matrix <space>? op <space>? number
 
 (defn add [op el1 el2] 
 (mapv #(mapv op %1 %2) el1 el2))
